@@ -9,7 +9,7 @@ This project uses the following references:
 
 ## Usage
 ### Command Line Parameters using the Test Console
-There are 4 properties exposed from the Bundler API, _italic_ are optional:
+There are 5 properties exposed from the Bundler API, _italic_ are optional:
 * __Source__: The path to the file you wish to pull all references from and merge into.
 * __Target__: The path to the resulting file after the merge is complete.
 * _Recurse_: If true, will go down the chain of references until none are left, bubbling the merges.
