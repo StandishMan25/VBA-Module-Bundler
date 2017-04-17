@@ -10,6 +10,10 @@ namespace VbaModuleBundler
 	public class Bundler
 	{
 		ILogger _logger;
+		bool _recurseReferences = true;
+		bool _alwaysUseSource = false;
+		string _source;
+		string _target;
 
 		public Bundler(ILogger logger)
 		{
@@ -126,8 +130,13 @@ namespace VbaModuleBundler
 
 						Console.BackgroundColor = ConsoleColor.Yellow;
 						Console.ForegroundColor = ConsoleColor.Black;
-						Console.WriteLine($"The source \"{sourceProject.Name}\" and target \"{targetProject.Name}\" have a {targetItem.Type} with the same name \"{targetItem.Name}\" and different code. Please advise: 0 to use source, 1 to keep target.");
-						if (Console.ReadLine().ToString() == "0")
+
+						if (!_alwaysUseSource)
+						{
+							Console.WriteLine($"The source \"{sourceProject.Name}\" and target \"{targetProject.Name}\" have a {targetItem.Type} with the same name \"{targetItem.Name}\" and different code. Please advise: 0 to use source, 1 to keep target.");
+						}
+
+						if (_alwaysUseSource || Console.ReadLine().ToString() == "0")
 							removeFromTarget.Add(targetItem);
 						else
 							sourceItems.Remove(sourceItems.Single(x => x.Name == targetItem.Name));
@@ -220,7 +229,7 @@ namespace VbaModuleBundler
 					continue;
 
 				//	No need to add the same reference.
-				if (project.References.Any(x => x.Libid == reference.Libid && x.Name == reference.Name))
+				if (project.References.Any(x => x.Libid.Equals(reference.Libid, StringComparison.CurrentCultureIgnoreCase) && x.Name.Equals(reference.Name, StringComparison.CurrentCultureIgnoreCase))) 
 					continue;
 
 				project.References.Add(reference);
@@ -234,10 +243,10 @@ namespace VbaModuleBundler
 		/// <param name="package"><see cref="ExcelPackage"/> to gather referenced modules from, and bundle with.</param>
 		/// <param name="recurseReferences">If true, will recurse each referenced file's references, bubbling up the merge references.</param>
 		/// <returns></returns>
-		public bool TryBundleProjects(ref ExcelPackage package, bool recurseReferences)
+		public bool TryBundleProjects(ref ExcelPackage package)
 		{
 			var project = package.Workbook.VbaProject;
-			return TryBundleProjects(ref package, recurseReferences, ref project);
+			return TryBundleProjects(ref package, ref project);
 		}
 
 		/// <summary>
@@ -247,7 +256,7 @@ namespace VbaModuleBundler
 		/// <param name="recurseReferences">If true, will recurse each referenced file's references, bubbling up the merge references.</param>
 		/// <param name="project"><see cref="ExcelVbaProject"/> project that will be modified with merged modules.</param>
 		/// <returns></returns>
-		private bool TryBundleProjects(ref ExcelPackage package, bool recurseReferences, ref ExcelVbaProject project)
+		private bool TryBundleProjects(ref ExcelPackage package, ref ExcelVbaProject project)
 		{
 			project = package.Workbook.VbaProject;
 			var references = this.GetReferences(package.Workbook.VbaProject);
@@ -265,10 +274,10 @@ namespace VbaModuleBundler
 				var referenceProject = referencePackage.Workbook.VbaProject;
 				var referencedReferences = this.GetReferences(referenceProject);
 
-				if (recurseReferences && referencedReferences.Excel.Count() > 0)
+				if (_recurseReferences && referencedReferences.Excel.Count() > 0)
 				{
 					_logger.Log($"Recursing references for \"{reference}\"");
-					TryBundleProjects(ref referencePackage, true, ref referenceProject);
+					TryBundleProjects(ref referencePackage, ref referenceProject);
 				}
 				this.TryMergeModules(referenceProject, project, out var modules);
 				this.TryMergeSystemReferences(ref project, referencedReferences.System);
@@ -278,5 +287,10 @@ namespace VbaModuleBundler
 
 			return true;
 		}
+
+		public bool RecurseReferences { get => _recurseReferences; set => _recurseReferences = value; }
+		public bool AlwaysUseSource { get => _alwaysUseSource; set => _alwaysUseSource = value; }
+		public string Source { get => _source; set => _source = value; }
+		public string Target { get => _target; set => _target = value; }
 	}
 }
