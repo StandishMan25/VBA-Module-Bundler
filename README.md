@@ -61,3 +61,10 @@ Add a reference to the library in the target application and follow the below fo
 * EPPlus cannot transfer/create Designer Modules (UserForms)
 * EPPlus cannot save a file as an `xlam` file, thus no "hidden" libraries could be created from this. You could of course save this as an `xlsm` extension, then open and save as `xlam`.
 * Ribbon methods (customUI) appear to not function properly when merged.
+
+## Example
+`MVVM_Form` references `Interfaces` and `Immutable`. `Immutable` references `Interfaces` as well. Both `MVVM_Form` and `Immutable` are using the early binding technique for namespacing and readability. 
+![Before](/Images/Before.jpg?raw=true "VBA Project referencing xlam libraries")
+
+After running, `MVVM_Form` is the only project open, and only the necessary modules and classes were "imported". All modules and classes can be imported by setting _Only-Import-Used_ to false.
+![After](/Images/After.jpg?raw=true "Single project with necessary references from dependencies")
