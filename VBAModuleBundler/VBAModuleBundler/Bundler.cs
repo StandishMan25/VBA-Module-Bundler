@@ -203,7 +203,31 @@ namespace VbaModuleBundler
 				throw;
 			}
 		}
-		
+
+		/// <summary>
+		/// Merges required non-Excel file references that are referenced by referenced files.
+		/// </summary>
+		/// <param name="project"></param>
+		/// <param name="references"></param>
+		/// <remarks>For example, if a reference needs Microsoft Scripting Runtime 5.3, we want the resulting bundled project to have it as well.</remarks>
+		/// <returns></returns>
+		public bool TryMergeSystemReferences(ref ExcelVbaProject project, IEnumerable<ExcelVbaReference> references)
+		{
+			foreach (var reference in references)
+			{
+				//	Should not be adding Excel files
+				if (reference.ReferenceRecordID == 14)
+					continue;
+
+				//	No need to add the same reference.
+				if (project.References.Any(x => x.Libid == reference.Libid && x.Name == reference.Name))
+					continue;
+
+				project.References.Add(reference);
+			}
+			return true;
+		}
+
 		/// <summary>
 		/// Takes the <see cref="ExcelPackage"/> and bundles the referenced projects into a single package, recursing references if desired.
 		/// </summary>
@@ -239,44 +263,19 @@ namespace VbaModuleBundler
 				this.TryGetFileInfo(path, out var referenceInfo);
 				this.TryGetExcelPackage(referenceInfo, out var referencePackage);
 				var referenceProject = referencePackage.Workbook.VbaProject;
+				var referencedReferences = this.GetReferences(referenceProject);
 
-				if (recurseReferences && this.GetReferences(referenceProject).Excel.Count() > 0)
+				if (recurseReferences && referencedReferences.Excel.Count() > 0)
 				{
 					_logger.Log($"Recursing references for \"{reference}\"");
 					TryBundleProjects(ref referencePackage, true, ref referenceProject);
 				}
 				this.TryMergeModules(referenceProject, project, out var modules);
+				this.TryMergeSystemReferences(ref project, referencedReferences.System);
 				this.TryAddToProject(ref project, modules);
 				this.TryRemoveReference(ref project, reference);
 			}
 
-			//	Add the system 
-			this.TryMergeSystemReferences(ref project, references.System);
-
-			return true;
-		}
-
-		/// <summary>
-		/// Merges required non-Excel file references that are referenced by referenced files.
-		/// </summary>
-		/// <param name="project"></param>
-		/// <param name="references"></param>
-		/// <remarks>For example, if a reference needs Microsoft Scripting Runtime 5.3, we want the resulting bundled project to have it as well.</remarks>
-		/// <returns></returns>
-		private bool TryMergeSystemReferences(ref ExcelVbaProject project, IEnumerable<ExcelVbaReference> references)
-		{
-			foreach (var reference in references)
-			{
-				//	Should not be adding Excel files
-				if (reference.ReferenceRecordID == 14)
-					continue;
-
-				//	No need to add the same reference.
-				if (project.References.Contains(reference))
-					continue;
-
-				project.References.Add(reference);
-			}
 			return true;
 		}
 	}

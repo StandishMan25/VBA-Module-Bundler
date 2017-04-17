@@ -8,18 +8,22 @@ namespace TestConsole
 	{
 		static void Main(string[] args)
 		{
-			Console.WriteLine("Started");
+			var logger = new Logger();
+			logger.Log("Started");
 
-			if (args.Length != 2)
-				throw new ArgumentException("A source workbook must be presented to merge referenced modules/classes from, and a target workbook to merge to.");
+			//if (args.Length != 2)
+			//	throw new ArgumentException("A source workbook must be presented to merge referenced modules/classes from, and a target workbook to merge to.");
 
-			string source = args[0];
-			string target = args[1];
+			//string source = args[0];
+			//string target = args[1];
+
+			var source = @"C:\Users\tstandish.TPS\Desktop\Everything\Excel\UserForm - MVVM.xlsm";
+			var target = @"C:\Users\tstandish.TPS\Desktop\Everything\Excel\UserForm - MVVM - Test Merge.xlsm";
 
 			if (source.Equals(target, StringComparison.InvariantCultureIgnoreCase))
 				throw new ArgumentException("Source and Target cannot be the same file.");
 
-			var bundler = new Bundler(new Logger());
+			var bundler = new Bundler(logger);
 
 			bundler.TryGetFileInfo(source, out var sourceInfo);
 			bundler.TryGetExcelPackage(sourceInfo, out var package);
