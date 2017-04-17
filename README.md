@@ -1,4 +1,4 @@
-# VBA Module Bunder
+# VBA Module Bundler
 Imports source's referenced file's classes and modules and bundles it into one singular project.
 
 ##  Required References for Building
