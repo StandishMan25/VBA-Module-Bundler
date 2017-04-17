@@ -10,8 +10,8 @@ This project uses the following references:
 ## Usage
 ### Command Line Parameters using the Test Console
 There are 4 properties exposed from the Bundler API, _italic_ are optional:
-* Source: The path to the file you wish to pull all references from and merge into.
-* Target: The path to the resulting file after the merge is complete.
+* __Source__: The path to the file you wish to pull all references from and merge into.
+* __Target__: The path to the resulting file after the merge is complete.
 * _Recurse_: If true, will go down the chain of references until none are left, bubbling the merges.
 * _Use-Source_: If true, will default to using the source modules on any conflict. If false, will prompt or throw exception.
 * _Only-Import-Used_: If true, will search through the code and determine which modules are required for functionality, else will include everything.
