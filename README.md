@@ -14,7 +14,7 @@ There are 4 properties exposed from the Bundler API, _italic_ are optional:
 * Target: The path to the resulting file after the merge is complete.
 * _Recurse_: If true, will go down the chain of references until none are left, bubbling the merges.
 * _Use-Source_: If true, will default to using the source modules on any conflict. If false, will prompt or throw exception.
-* _Only-Import-Used: If true, will search through the code and determine which modules are required for functionality, else will include everything.
+* _Only-Import-Used_: If true, will search through the code and determine which modules are required for functionality, else will include everything.
 * _Help_: Displays a help message similar to this list. Can be invoked with ?, h, hlp, help.
 
 You pass arguments with a '/' in front of the parameter name, and a space between the name and value, like so:
