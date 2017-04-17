@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.26228.9
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VBAModuleBundler", "VBAModuleBundler\VBAModuleBundler.csproj", "{332DF85D-077B-485A-85D2-31D835D6E041}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestConsole", "TestConsole\TestConsole.csproj", "{1239D010-EC12-46F5-963A-E4E4C5A8FA6C}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{332DF85D-077B-485A-85D2-31D835D6E041}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{332DF85D-077B-485A-85D2-31D835D6E041}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{332DF85D-077B-485A-85D2-31D835D6E041}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{332DF85D-077B-485A-85D2-31D835D6E041}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1239D010-EC12-46F5-963A-E4E4C5A8FA6C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1239D010-EC12-46F5-963A-E4E4C5A8FA6C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1239D010-EC12-46F5-963A-E4E4C5A8FA6C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1239D010-EC12-46F5-963A-E4E4C5A8FA6C}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
