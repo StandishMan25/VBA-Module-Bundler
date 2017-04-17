@@ -9,16 +9,27 @@ namespace VbaModuleBundler
 {
 	public class Bundler
 	{
+		#region Private Declarations
+
 		ILogger _logger;
 		bool _recurseReferences = true;
 		bool _alwaysUseSource = false;
+		bool _onlyMergeUsed = true;
 		string _source;
 		string _target;
+
+		#endregion
+
+		#region Constructors
 
 		public Bundler(ILogger logger)
 		{
 			_logger = logger;
 		}
+
+		#endregion
+
+		#region Public Methods
 
 		/// <summary>
 		/// Attempts to create a <see cref=" FileInfo"/> from the provided <paramref name="source"/> path.
@@ -105,16 +116,32 @@ namespace VbaModuleBundler
 				var sourceItems = sourceProject.Modules.Where(x => x.Type == eModuleType.Module || x.Type == eModuleType.Class).ToList();
 				var targetItems = targetProject.Modules.Where(x => x.Type == eModuleType.Module || x.Type == eModuleType.Class || x.Type == eModuleType.Designer).ToList();
 
+				var removeFromSource = new List<ExcelVBAModule>();
 				var removeFromTarget = new List<ExcelVBAModule>();
+
+				if (_onlyMergeUsed)
+				{
+					foreach (var source in sourceItems)
+					{
+						if (!targetItems.Any(x => x.Code.Contains(source.Name)) && !sourceItems.Any(x => x.Code.Contains(source.Name)))
+							removeFromSource.Add(source);
+					}
+				}
 
 				foreach (var targetItem in targetItems)
 				{
+					//	Remove early binding reference since code will be local.
 					if (targetItem.Code.Contains($"{sourceProject.Name}."))
 						targetItem.Code = targetItem.Code.Replace($"{sourceProject.Name}.", "");
 
-					if (sourceItems.Any(x => x.Name == targetItem.Name && x.Code == targetItem.Code))
-						sourceItems.Remove(sourceItems.Single(x => x.Name == targetItem.Name));
+					if (targetItem.Code.Contains($"{targetProject.Name}."))
+						targetItem.Code = targetItem.Code.Replace($"{targetProject.Name}.", "");
 
+					//	If name and code are the same, remove it from the source so it doesn't duplicate on merge.
+					if (sourceItems.Any(x => x.Name == targetItem.Name && x.Code == targetItem.Code))
+						removeFromSource.Add(sourceItems.Single(x => x.Name == targetItem.Name));
+
+					//	If a module of the same name exists in both projects, but the code differs, use default or prompt user for action.
 					if (sourceItems.Any(x => x.Name == targetItem.Name && x.Code != targetItem.Code))
 					{
 						try
@@ -139,7 +166,7 @@ namespace VbaModuleBundler
 						if (_alwaysUseSource || Console.ReadLine().ToString() == "0")
 							removeFromTarget.Add(targetItem);
 						else
-							sourceItems.Remove(sourceItems.Single(x => x.Name == targetItem.Name));
+							removeFromSource.Add(sourceItems.Single(x => x.Name == targetItem.Name));
 						Console.BackgroundColor = backColor;
 						Console.ForegroundColor = foreColor;
 					}
@@ -147,6 +174,9 @@ namespace VbaModuleBundler
 
 				foreach (var item in removeFromTarget)
 					targetItems.Remove(item);
+
+				foreach (var item in removeFromSource)
+					sourceItems.Remove(item);
 
 				////	Change the name of the source objects to contain the source's VBAProject name
 				//foreach (var item in sourceItems)
@@ -229,7 +259,7 @@ namespace VbaModuleBundler
 					continue;
 
 				//	No need to add the same reference.
-				if (project.References.Any(x => x.Libid.Equals(reference.Libid, StringComparison.CurrentCultureIgnoreCase) && x.Name.Equals(reference.Name, StringComparison.CurrentCultureIgnoreCase))) 
+				if (project.References.Any(x => x.Libid.Equals(reference.Libid, StringComparison.CurrentCultureIgnoreCase) && x.Name.Equals(reference.Name, StringComparison.CurrentCultureIgnoreCase)))
 					continue;
 
 				project.References.Add(reference);
@@ -248,6 +278,10 @@ namespace VbaModuleBundler
 			var project = package.Workbook.VbaProject;
 			return TryBundleProjects(ref package, ref project);
 		}
+
+		#endregion
+
+		#region Private Methods
 
 		/// <summary>
 		/// Actually executes the merging operations. 
@@ -288,9 +322,35 @@ namespace VbaModuleBundler
 			return true;
 		}
 
+		#endregion
+
+		#region Public Properties
+
+		/// <summary>
+		/// If true, will go down the chain of references until none are left, bubbling the merges.
+		/// </summary>
 		public bool RecurseReferences { get => _recurseReferences; set => _recurseReferences = value; }
+
+		/// <summary>
+		/// If true, will default to using the source modules on any conflict. If false, you will either be prompted or an exception will be thrown.
+		/// </summary>
 		public bool AlwaysUseSource { get => _alwaysUseSource; set => _alwaysUseSource = value; }
+
+		/// <summary>
+		/// If true, will search through the code and determine which modules are required for functionality. If false, will include everything.
+		/// </summary>
+		public bool OnlyMergeUsed { get => _onlyMergeUsed; set => _onlyMergeUsed = value; }
+
+		/// <summary>
+		/// The path to the file you wish to pull all references from and merge into.
+		/// </summary>
 		public string Source { get => _source; set => _source = value; }
+
+		/// <summary>
+		/// The path to the resulting file after the merge is complete.
+		/// </summary>
 		public string Target { get => _target; set => _target = value; }
+
+		#endregion
 	}
 }
