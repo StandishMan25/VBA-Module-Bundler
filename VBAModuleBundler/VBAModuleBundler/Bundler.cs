@@ -113,6 +113,15 @@ namespace VbaModuleBundler
 
 					if (sourceItems.Any(x => x.Name == targetItem.Name && x.Code != targetItem.Code))
 					{
+						try
+						{
+							var consolePresent = Console.WindowHeight > 0;
+						}
+						catch
+						{
+							throw new ArgumentException($"The source \"{sourceProject.Name}\" and target \"{targetProject.Name}\" have a {targetItem.Type} with the same name \"{targetItem.Name}\" and different code. Please remove from one or the other and run again.");
+						}
+
 						ConsoleColor backColor = Console.BackgroundColor, foreColor = Console.ForegroundColor;
 
 						Console.BackgroundColor = ConsoleColor.Yellow;
