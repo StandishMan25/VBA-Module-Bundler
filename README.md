@@ -14,11 +14,11 @@ There are 5 properties exposed from the Bundler API, _italic_ are optional:
 * __Target__: The path to the resulting file after the merge is complete.
 * _Recurse_: If true, will go down the chain of references until none are left, bubbling the merges.
 * _Use-Source_: If true, will default to using the source modules on any conflict. If false, will prompt or throw exception.
-* _Only-Import-Used_: If true, will search through the code and determine which modules are required for functionality, else will include everything.
+* _Only-Merge-Used_: If true, will search through the code and determine which modules are required for functionality, else will include everything.
 * _Help_: Displays a help message similar to this list. Can be invoked with ?, h, hlp, help.
 
 You pass arguments with a '/' in front of the parameter name, and a space between the name and value, like so:
-`C:\>VbaModuleBunder.exe /source "C:\some\path\to\file.xlam" /target "C:\some\path\to\anotherFile.xlsm" /recurse true /use-source true /only-include-used true`
+`C:\>VbaModuleBunder.exe /source "C:\some\path\to\file.xlam" /target "C:\some\path\to\anotherFile.xlsm" /recurse true /use-source true /only-merge-used true`
 
 ### Other
 Add a reference to the library in the target application and follow the below format. 
@@ -67,6 +67,6 @@ Add a reference to the library in the target application and follow the below fo
 
 ![Before](/Images/Before.png?raw=true "VBA Project referencing xlam libraries")
 
-After running, `MVVM_Form` is the only project open, and only the necessary modules and classes were "imported". All modules and classes can be imported by setting _Only-Import-Used_ to false.
+After running, `MVVM_Form` is the only project open, and only the necessary modules and classes were "imported". All modules and classes can be imported by setting _Only-Merge-Used_ to false.
 
 ![After](/Images/After.png?raw=true "Single project with necessary references from dependencies")
