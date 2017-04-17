@@ -39,3 +39,5 @@ Add a reference to the library in the target application and follow the below fo
 
     //	Add the system references if a referenced project needs it.
     this.TryMergeSystemReferences(ref project, references.System);
+##  Required References
+This project uses [EPPlus](https://github.com/pruiz/EPPlus/tree/master/EPPlus) and the temporary [System.ValueTuple](https://www.nuget.org/packages/System.ValueTuple/) library from Microsoft.
