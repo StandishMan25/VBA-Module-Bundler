@@ -20,7 +20,7 @@ Add a reference to the library in the target application and follow the below fo
 	*	This merges dependent modules into the target project, and adds system libraries as well,
 	*	to assist in preventing invalid projects on load.
 	*/
-    	foreach (var reference in new List<ExcelVbaReference>(references.Excel))
+    foreach (var reference in new List<ExcelVbaReference>(references.Excel))
 	{
 		var path = this.GetReferencePath(reference);
 		this.TryGetFileInfo(path, out var referenceInfo);
