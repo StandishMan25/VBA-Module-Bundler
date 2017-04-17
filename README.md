@@ -59,3 +59,4 @@ Add a reference to the library in the target application and follow the below fo
 ## Caveats
 * EPPlus cannot transfer/create Designer Modules (UserForms)
 * EPPlus cannot save a file as an `xlam` file, thus no "hidden" libraries could be created from this. You could of course save this as an `xlsm` extension, then open and save as `xlam`.
+* Ribbon methods (customUI) appear to not function properly when merged.
