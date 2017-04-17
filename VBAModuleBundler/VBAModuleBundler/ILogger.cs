@@ -11,12 +11,4 @@ namespace VbaModuleBundler
 	{
 		void Log(string message);
 	}
-
-	public class Logger : ILogger
-	{
-		public void Log(string message)
-		{
-			Debug.WriteLine(message);
-		}
-	}
 }

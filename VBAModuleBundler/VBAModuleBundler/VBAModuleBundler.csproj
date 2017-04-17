@@ -48,7 +48,6 @@
   <ItemGroup>
     <Compile Include="Bundler.cs" />
     <Compile Include="ILogger.cs" />
-    <Compile Include="Logger.cs" />
     <Compile Include="Streamer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
